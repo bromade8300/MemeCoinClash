@@ -1,0 +1,48 @@
+@startuml
+title Activités de la simulation et du mouvement
+start
+:Créer carte, 4 Maîtres et agents;
+while (Partie non terminée ?) is (oui)
+  :Incrémenter le tour;
+  :Mélanger les agents mobiles;
+  while (Agent suivant ?) is (oui)
+    if (Agent actif ?) then (oui)
+      :Appeler move() polymorphe;
+      :Choisir direction et distance;
+      if (Énergie < 20 % ?) then (oui)
+        :Orienter vers sa SafeZone;
+      endif
+      while (Cases restantes ?) is (oui)
+        if (Case bloquée ?) then (oui)
+          :Dépenser l'énergie du trajet restant;
+          break
+        elseif (Agent sur la case ?) then (oui)
+          :Rencontre et échange / combat;
+          :Dépenser l'énergie du trajet restant;
+          break
+        else (non)
+          :Avancer d'une case;
+          :Dépenser 1 EP hors de sa zone;
+          :Livrer les messages si proche du Maître;
+          if (Énergie = 0 ?) then (oui)
+            :Devenir obstacle, effacer les messages;
+            break
+          endif
+        endif
+      endwhile (non)
+      :Récupérer 5 EP si fin de tour dans sa zone;
+      :Livrer si adjacent au Maître;
+    endif
+    if (Un Maître possède les 24 messages ?) then (oui)
+      :Déclarer la victoire et arrêter;
+      stop
+    endif
+  endwhile (non)
+  if (Airdrop activé et tour multiple de 10 ?) then (oui)
+    :Donner un message à un agent actif;
+  endif
+  :Vérifier la limite de tours;
+endwhile (non)
+:Afficher gagnant ou égalité;
+stop
+@enduml

@@ -1,0 +1,237 @@
+@startuml
+title MemeCoin Clash — diagramme de classes complet (déclarations du code)
+skinparam classAttributeIconSize 0
+skinparam defaultFontName SansSerif
+skinparam classBackgroundColor #F5F7FC
+skinparam classBorderColor #506078
+skinparam shadowing false
+left to right direction
+hide empty members
+abstract class Agent {
+  {static} ~int instanceCount
+  ~Team team
+  ~int x
+  ~int y
+  ~int energy
+  ~int lastDx
+  ~int lastDy
+  ~boolean exhausted
+  ~Set<Integer> messages
+  ~Agent(Team, int, int)
+  {abstract} ~void move(Simulation)
+  ~void travel(Simulation, int, int, int)
+  -void spend(Simulation, int)
+  -void recover(Simulation)
+}
+class BoardPanel {
+  -EnumMap<Team, BufferedImage> logos
+  -Color canvas
+  -Simulation game
+  ~BoardPanel(Simulation)
+  #void paintComponent(Graphics)
+  -Color blend(Color, Color, float)
+  -void drawZoneLabel(Graphics2D, Team, int, int, int)
+  -void drawAgent(Graphics2D, Agent, int, int, int, boolean)
+  -void drawCentered(Graphics2D, String, int, int, int, Color)
+  ~void setGame(Simulation)
+}
+class BonkAgent {
+  {static} ~int count
+  ~BonkAgent(int, int)
+  ~void move(Simulation)
+}
+class BonkMaster <<Singleton>> {
+  {static} -BonkMaster INSTANCE
+  -BonkMaster()
+  {static} ~BonkMaster get()
+}
+class DogeAgent {
+  {static} ~int count
+  ~DogeAgent(int, int)
+  ~void move(Simulation)
+}
+class DogeMaster <<Singleton>> {
+  {static} -DogeMaster INSTANCE
+  -DogeMaster()
+  {static} ~DogeMaster get()
+}
+class GameMap {
+  {static} ~int WIDTH
+  {static} ~int HEIGHT
+  {static} -int SAFE_ZONE_SIZE
+  -boolean[][] obstacles
+  ~GameMap()
+  ~void clear()
+  ~void placeRandomObstacles(int)
+  ~boolean inBounds(int, int)
+  ~boolean obstacleAt(int, int)
+  ~Team safeOwner(int, int)
+  ~boolean isSafe(Team, int, int)
+  ~boolean mayEnter(Team, int, int)
+  ~List<Position> neighbors(int, int)
+  ~Position directionHome(Team, int, int)
+}
+class GameSettings {
+  ~int agents
+  ~int obstacles
+  ~int energy
+  ~int maxTurns
+  ~int speed
+  ~boolean alliances
+  ~boolean chaos
+  ~boolean neon
+  ~GameSettings(int, int, int, int, int, boolean, boolean, boolean)
+  {static} ~GameSettings defaults()
+}
+class GameWindow {
+  -GameSettings settings
+  -Simulation game
+  -BoardPanel board
+  -JTextArea log
+  -JLabel status
+  -JLabel instances
+  -JButton play
+  -Timer timer
+  ~GameWindow()
+  -void showSettings()
+  -void startNewGame()
+  -void automaticStep(ActionEvent)
+  -void pause()
+  -void refresh()
+}
+abstract class HypeAgent {
+  ~HypeAgent(Team, int, int)
+}
+abstract class Master {
+  ~Master(Team)
+  ~void clear()
+  ~void move(Simulation)
+}
+class MemeCoinClash {
+  +MemeCoinClash()
+  {static} +void main(String[])
+}
+class PepeAgent {
+  {static} ~int count
+  ~PepeAgent(int, int)
+  ~void move(Simulation)
+}
+class PepeMaster <<Singleton>> {
+  {static} -PepeMaster INSTANCE
+  -PepeMaster()
+  {static} ~PepeMaster get()
+}
+class Position {
+  -int x
+  -int y
+  ~Position(int, int)
+  +String toString()
+  +int hashCode()
+  +boolean equals(Object)
+  +int x()
+  +int y()
+}
+class RandomSource <<Singleton>> {
+  {static} -RandomSource INSTANCE
+  -Random random
+  -RandomSource()
+  {static} ~RandomSource get()
+  ~int nextInt(int)
+  ~boolean nextBoolean()
+  ~void setSeed(long)
+  ~<T> void shuffle(List<T>)
+}
+class SettingsDialog {
+  -SettingsDialog()
+  {static} ~GameSettings show(JFrame, GameSettings)
+  {static} -JSpinner spinner(int, int, int, int)
+  {static} -void addSetting(JPanel, GridBagConstraints, int, String, JComponent)
+}
+class ShibaAgent {
+  {static} ~int count
+  ~ShibaAgent(int, int)
+  ~void move(Simulation)
+}
+class ShibaMaster <<Singleton>> {
+  {static} -ShibaMaster INSTANCE
+  -ShibaMaster()
+  {static} ~ShibaMaster get()
+}
+class Simulation {
+  {static} ~int WIDTH
+  {static} ~int HEIGHT
+  {static} ~int MESSAGE_COUNT
+  ~GameSettings settings
+  -List<Agent> agents
+  -EnumMap<Team, Master> masters
+  -GameMap map
+  -List<String> events
+  ~int turn
+  ~boolean finished
+  ~String result
+  ~Simulation()
+  ~Simulation(GameSettings)
+  ~void reset()
+  -int[] freeInSafeZone(Team)
+  ~void step()
+  -boolean finishIfComplete()
+  ~int score(Team)
+  ~Master master(Team)
+  ~List<Agent> agents()
+  ~List<String> events()
+  ~void log(String)
+  ~GameMap map()
+  ~boolean inBounds(int, int)
+  ~boolean obstacleAt(int, int)
+  ~Team safeOwner(int, int)
+  ~boolean isSafe(Team, int, int)
+  ~boolean mayEnter(Team, int, int)
+  ~Agent agentAt(int, int)
+  ~boolean blockedAhead(Agent, int, int)
+  ~int[] directionHome(Agent)
+  ~int[] randomDirection()
+  ~void deliver(Agent)
+  ~void encounter(Agent, Agent)
+  -List<Integer> shareSome(Agent, Agent)
+  -String messageLetters(Collection<Integer>)
+}
+enum Team {
+  {static} +Team DOGE
+  {static} +Team SHIBA
+  {static} +Team PEPE
+  {static} +Team BONK
+  ~String name
+  ~String symbol
+  ~Color color
+  ~int alliance
+  {static} +Team[] values()
+  {static} +Team valueOf(String)
+  -Team(String, String, Color, int)
+}
+abstract class ViralAgent {
+  ~ViralAgent(Team, int, int)
+}
+ViralAgent <|-- BonkAgent
+Master <|-- BonkMaster
+HypeAgent <|-- DogeAgent
+Master <|-- DogeMaster
+Agent <|-- HypeAgent
+Agent <|-- Master
+ViralAgent <|-- PepeAgent
+Master <|-- PepeMaster
+HypeAgent <|-- ShibaAgent
+Master <|-- ShibaMaster
+Agent <|-- ViralAgent
+Simulation *-- GameMap
+Simulation o-- "4" Master
+Simulation o-- "0..*" Agent
+Simulation --> GameSettings
+GameWindow --> Simulation
+GameWindow --> BoardPanel
+GameWindow --> SettingsDialog
+MemeCoinClash ..> GameWindow
+Simulation ..> RandomSource
+BoardPanel --> Simulation
+Agent --> Team
+GameMap --> Position
+@enduml

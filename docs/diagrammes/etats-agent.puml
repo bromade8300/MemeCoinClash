@@ -1,0 +1,19 @@
+@startuml
+title Cycle de vie d'un agent mobile
+[*] --> ZoneSure : création
+ZoneSure --> Exploration : départ
+ZoneSure : +5 EP en fin de tour, au maximum
+ZoneSure : livraison si adjacent au Maître
+Exploration --> Exploration : déplacement / rencontre\nEP >= 20 %
+Exploration --> Retour : EP < 20 %
+Exploration --> ZoneSure : entrée dans sa SafeZone
+Retour --> ZoneSure : entrée dans sa SafeZone\n+5 EP par tour
+Retour --> Retour : obstacle ou rencontre\nEP > 0
+Exploration --> Epuise : EP = 0
+Retour --> Epuise : EP = 0
+Epuise : immobile ; messages effacés
+Epuise --> [*] : fin de partie
+ZoneSure --> [*] : fin de partie
+Exploration --> [*] : fin de partie
+Retour --> [*] : fin de partie
+@enduml
